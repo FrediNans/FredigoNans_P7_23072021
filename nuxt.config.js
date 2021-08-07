@@ -3,7 +3,7 @@ export default {
   head: {
     title: "frontend",
     htmlAttrs: {
-      lang: "en"
+      lang: "fr"
     },
     meta: [
       { charset: "utf-8" },
@@ -13,12 +13,12 @@ export default {
     ],
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }]
   },
-
+  ssr: false,
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [],
+  css: ["~/assets/scss/main.scss"],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: ["~/plugins/axios"],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -29,10 +29,20 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/bootstrap
-    "bootstrap-vue/nuxt"
+    "@nuxtjs/axios",
+    "bootstrap-vue/nuxt",
+    "@nuxtjs/style-resources"
   ],
   bootstrapVue: {
-    icons: true
+    icons: true,
+    bootstrapCSS: false,
+    bootstrapVueCSS: false
+  },
+  styleResources: {
+    scss: "@/assets/scss/_variables.scss"
+  },
+  axios: {
+    baseURL: "http://localhost:8080"
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build

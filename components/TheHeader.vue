@@ -1,11 +1,11 @@
 <template>
   <header>
-    <b-navbar toggleable="lg" type="dark" variant="secondary">
+    <b-navbar id="header" toggleable="lg" type="dark" variant="primary">
       <b-img
-        id="logo"
         src="../static/icon-left-white.png"
         fluid
         alt="logo"
+        class="col-12 col-sm-4"
       ></b-img>
     </b-navbar>
   </header>
@@ -15,9 +15,8 @@
 export default {};
 </script>
 
-<style scoped>
-#logo {
-  width: 50%;
-  margin: 1rem 0 1rem 1rem;
+<style lang="scss" scoped>
+#header {
+  height: 100px;
 }
 </style>
