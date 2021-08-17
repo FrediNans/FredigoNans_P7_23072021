@@ -86,10 +86,15 @@ export default {
       isLoading: "user/isLoading",
       errors: "user/errors",
       isLoggedIn: "user/isLoggedIn",
-      user: "user/currentUser"
+      user: "user/currentUser",
+      token: "user/token"
     })
   },
-
+  beforeMount() {
+    if (!this.token) {
+      this.$store.dispatch("user/fetchCurrentUser");
+    }
+  },
   methods: {
     trySubmit(event) {
       event.preventDefault();

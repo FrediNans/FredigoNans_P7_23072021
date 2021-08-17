@@ -19,8 +19,9 @@ export const actions = {
     try {
       context.commit("updateIsLoading", true);
       const response = await this.$axios.post("/user/login", credentials);
+      localStorage.setItem("token", response.data.token);
       context.commit("loginSuccess", response.data);
-      this.$router.push("/account");
+      this.$router.push("/wall");
     } catch (err) {
       context.commit("signError", err);
     }
@@ -59,14 +60,32 @@ export const actions = {
     } catch (error) {
       context.commit("signError", error);
     }
+  },
+
+  tryLogout(context) {
+    localStorage.removeItem("token");
+    context.commit("logoutSuccess");
+    this.$router.push("/");
+  },
+
+  async tryUpdateToken(context) {
+    const token = localStorage.getItem("token");
+    context.commit("updateToken", token);
   }
 };
 
 export const mutations = {
+  logoutSuccess(state) {
+    state.token = null;
+    state.isLoggedIn = false;
+    state.data = {};
+  },
   updateIsLoading(state, isLoading) {
     state.isLoading = isLoading;
   },
-
+  updateToken(token) {
+    state.token = token;
+  },
   signupSuccess(state) {
     state.isLoading = false;
     state.errors = [];
@@ -90,7 +109,6 @@ export const mutations = {
     delete data.user.password;
     state.data = data.user;
     state.token = data.token;
-    localStorage.setItem("token", data.token);
   },
   signOut(state) {
     state.token = null;

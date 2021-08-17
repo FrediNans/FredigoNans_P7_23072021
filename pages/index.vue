@@ -59,6 +59,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import { mapState } from "vuex";
 export default {
   data() {
     return {
@@ -72,7 +73,18 @@ export default {
     };
   },
   computed: {
-    ...mapGetters({ isLoading: "user/isLoading", error: "user/errors" })
+    ...mapGetters({
+      isLoading: "user/isLoading",
+      error: "user/errors"
+    }),
+    ...mapState("user", {
+      isLoggedIn: "isLoggedIn"
+    })
+  },
+  updated() {
+    if (this.isLoggedIn != false) {
+      this.$router.push("/wall");
+    }
   },
   methods: {
     tryLogin(event) {
@@ -92,5 +104,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss" scoped></style>

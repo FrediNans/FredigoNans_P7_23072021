@@ -1,7 +1,9 @@
-export default async function({ $axios, store, redirect }) {
-  const token = store.getters["user/token"];
-  console.log(token);
-  if (token != null) {
-    $axios.setToken(token, "Bearer");
-  }
+export default function({ $axios, store }) {
+  $axios.onRequest(config => {
+    if (store.state.user.token) {
+      config.headers.common[
+        "Authorization"
+      ] = `Bearer ${store.state.user.token}`;
+    }
+  });
 }
