@@ -66,7 +66,27 @@
         <p class="my-2">{{ post.content }}</p>
       </div>
       <hr />
-      <comment />
+      <div v-for="comment of post.Comments" :key="comment.id">
+        <div class="d-flex mb-2">
+          <b-avatar size="2rem" variant="info"></b-avatar>
+          <div class="d-flex align-items-center font-weight-bold ml-2">
+            {{
+              comment.User.lastname.charAt(0).toUpperCase() +
+                comment.User.lastname.slice(1) +
+                " " +
+                comment.User.firstname.charAt(0).toUpperCase() +
+                comment.User.firstname.slice(1)
+            }}
+          </div>
+        </div>
+        <p
+          class="bg-light mb-2 ml-5 mr-3 text-break rounded-pill w-auto px-4 py-2 shadow"
+        >
+          {{ comment.comment }}
+        </p>
+      </div>
+      <hr v-if="post.Comments.length > 0" />
+      <comment :postId="post.id"></comment>
     </article>
   </section>
 </template>
@@ -103,9 +123,6 @@ export default {
       currentPost: "currentPost",
       posts: "posts"
     })
-    //...mapState("publication", {
-    //posts: "posts"
-    //})
   },
   methods: {
     getCurrentPost(id) {
@@ -125,7 +142,7 @@ export default {
 <style lang="scss" scoped>
 #imgContent {
   max-width: 100%;
-  max-height: 350px;
+  max-height: 250px;
   object-fit: cover;
 }
 </style>

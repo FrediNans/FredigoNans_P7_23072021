@@ -16,6 +16,7 @@
           </b-input-group-text>
         </b-input-group-prepend>
         <b-form-input
+          class="text-capitalize"
           id="lastName"
           placeholder="Nom"
           type="text"
@@ -47,6 +48,7 @@
           </b-input-group-text>
         </b-input-group-prepend>
         <b-form-input
+          class="text-capitalize"
           id="region"
           placeholder="Région"
           type="text"

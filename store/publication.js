@@ -115,5 +115,13 @@ export const mutations = {
   deletePostSuccess(state, data) {
     const index = state.posts.findIndex(p => p.id == data);
     state.posts.splice(index, 1);
+  },
+  createCommentSuccess(state, data) {
+    console.log(data);
+    // state.posts = state.posts.map(p => {
+    //  if (p.id == data.id) {
+    // }
+    // return p;
+    // });
   }
 };

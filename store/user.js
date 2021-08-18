@@ -31,7 +31,7 @@ export const actions = {
       context.commit("updateIsLoading", true);
       await this.$axios.post("http://localhost:8080/user/signup", user);
       context.commit("signupSuccess");
-      this.$router.push("/wall");
+      this.$router.push("/");
     } catch (err) {
       context.commit("signError", err);
     }
