@@ -22,7 +22,9 @@ export const actions = {
         "http://localhost:8080/publication/new",
         file
       );
-      context.commit("createPublicationSuccess", response.data);
+      if (response.status == 201) {
+        context.dispatch("getAllPost");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -57,6 +59,17 @@ export const actions = {
       context.commit("getCurrentPostSuccess", credentials);
     }
   },
+  async getOnePost(context, credentials) {
+    try {
+      const response = await this.$axios.get(
+        `http://localhost:8080/publication/${credentials}`
+      );
+      context.commit("getOnePostSuccess", response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
   async deletePost(context, credentials) {
     if (credentials > 0) {
       try {
@@ -73,8 +86,7 @@ export const actions = {
 
 export const mutations = {
   createPublicationSuccess(state, data) {
-    state.publication = data;
-    this.$router.push("/wall");
+    state.posts.push(data);
   },
   getAllPostSuccess(state, data) {
     state.posts = data;
@@ -116,12 +128,12 @@ export const mutations = {
     const index = state.posts.findIndex(p => p.id == data);
     state.posts.splice(index, 1);
   },
-  createCommentSuccess(state, data) {
-    console.log(data);
-    // state.posts = state.posts.map(p => {
-    //  if (p.id == data.id) {
-    // }
-    // return p;
-    // });
+  getOnePostSuccess(state, response) {
+    state.posts = state.posts.map(p => {
+      if (p.id == response.data.id) {
+        p.Comments = response.data.Comments;
+      }
+      return p;
+    });
   }
 };

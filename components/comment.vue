@@ -3,6 +3,7 @@
     <form @submit.prevent="trySubmit" class="d-flex">
       <b-form-input
         v-model="form.comment"
+        class="rounded-pill shadow border-0"
         placeholder="Ecrire un commentaire ..."
         required
       ></b-form-input>
@@ -33,14 +34,10 @@ export default {
   props: ["postId"],
   methods: {
     trySubmit() {
-      console.log(this.postId);
       const formData = new FormData();
       formData.append("data", JSON.stringify(this.form));
       this.$store.dispatch("comment/tryCreateComment", formData);
       this.form.comment = "";
-      setTimeout(() => {
-        this.$store.dispatch("publication/getAllPost");
-      }, 1000);
     }
   }
 };

@@ -4,7 +4,7 @@
     id="modifyPost"
     scrollable
     header-bg-variant="secondary"
-    body-bg-variant="light"
+    body-bg-variant="secondary"
     footer-bg-variant="secondary"
     centered
     ref="modal"
@@ -64,9 +64,10 @@
         title="Annuler"
         variant="danger"
         button
-        icon="arrow-left-circle"
+        icon="arrow-left"
         @click="cancel()"
         class="shadow"
+        size="2rem"
       ></b-avatar>
       <b-avatar
         v-b-tooltip.hover
@@ -76,6 +77,7 @@
         icon="check2-circle"
         @click="trySubmit(), ok()"
         class="shadow"
+        size="2rem"
       ></b-avatar>
     </template>
   </b-modal>
@@ -125,8 +127,6 @@ export default {
     },
 
     async trySubmit() {
-      console.log();
-
       const formData = new FormData();
       formData.append("image", this.image);
       formData.append("post", JSON.stringify(this.currentPost));

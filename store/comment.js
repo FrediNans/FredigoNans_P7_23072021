@@ -1,12 +1,10 @@
 export const state = () => ({
-  comment: {},
-  comments: [],
+  currentComment: {},
   errors: []
 });
 
 export const getters = {
-  comment: state => state.comment,
-  comments: state => state.comments,
+  currentComment: state => state.currentComment,
   errors: state => state.errors
 };
 
@@ -17,16 +15,52 @@ export const actions = {
         "http://localhost:8080/comment/new",
         credentials
       );
+      if ((response.satus = 201)) {
+        store.dispatch("publication/getOnePost", response.data.PublicationId, {
+          root: true
+        });
+      }
     } catch (error) {
       console.log(error);
     }
   },
-  async getAllCommentForThisPost(context, credentials) {
+
+  async getOneComment(context, credentials) {
     try {
       const response = await this.$axios.get(
-        `http://localhost:8080/comment/all/${credentials}`
+        `http://localhost:8080/comment/${credentials}`
       );
-      commit("comment/publication/getAllCommentSuccess", response.data);
+      context.commit("getOneCommentSuccess", response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  async tryDeleteComment(store, credentials) {
+    try {
+      const response = await this.$axios.delete(
+        `http://localhost:8080/comment/deleteComment/${credentials.id}`
+      );
+      if ((response.satus = 200)) {
+        store.dispatch("publication/getOnePost", credentials.postId, {
+          root: true
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  async tryModifyComment(store, credentials) {
+    console.log(credentials);
+    try {
+      const response = await this.$axios.put(
+        `http://localhost:8080/comment/modifyComment/${credentials.id}`,
+        credentials
+      );
+      if ((response.satus = 200)) {
+        store.dispatch("publication/getOnePost", credentials.postId, {
+          root: true
+        });
+      }
     } catch (error) {
       console.log(error);
     }
@@ -34,7 +68,10 @@ export const actions = {
 };
 
 export const mutations = {
-  getAllCommentSuccess(state, data) {
-    state.comments = data;
+  getOneCommentSuccess(state, response) {
+    state.currentComment = response.data;
+  },
+  updateCurrentComment(state, data) {
+    state.currentComment.comment = data;
   }
 };

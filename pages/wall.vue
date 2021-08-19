@@ -1,15 +1,16 @@
 <template>
   <section class="mt-4 ">
     <div class="d-flex justify-content-center mb-4">
-      <nuxt-link id="postButton" class="btn btn-info" to="/publicationForm">
-        <b-icon-journal-plus></b-icon-journal-plus> Nouveau post</nuxt-link
+      <b-button v-b-modal.createPost variant="info">
+        <b-icon-journal-plus></b-icon-journal-plus> Nouveau post</b-button
       >
     </div>
-    <modifyPost />
+    <CreatePost />
+    <ModifyPost />
     <article
       v-for="post of posts"
       :key="post.id"
-      class="col-11 bg-secondary mx-auto rounded py-2 mt-3 col-sm-8 col-lg-7 text-primary"
+      class="col-11 bg-secondary mx-auto rounded py-2 mt-3 col-sm-8 col-lg-6 text-primary"
     >
       <div class="d-flex justify-content-between">
         <div class="d-flex">
@@ -34,8 +35,8 @@
             title="Supprimer"
             variant="danger"
             button
-            icon="x-circle"
-            class="shadow"
+            icon="x"
+            class="shadow ml-2"
             @click="deletePost(post.id)"
             size="2rem"
           ></b-avatar>
@@ -53,40 +54,88 @@
         </div>
       </div>
       <hr />
-      <div class="mt-2 font-weight-bold text-center">
+      <div
+        class="mt-2 font-weight-bold text-center bg-white mb-3 shadow py-2 px-4 text-break textContainer"
+      >
         {{ post.title }}
       </div>
-      <div
-        v-if="post.imageUrl !== null"
-        class="d-flex justify-content-center py-3"
-      >
+      <div v-if="post.imageUrl !== null" id="imgContainer">
         <img id="imgContent" :src="post.imageUrl" />
       </div>
-      <div class="d-flex justify-content-start align-items-center px-2">
-        <p class="my-2">{{ post.content }}</p>
+      <div
+        class="d-flex justify-content-start align-items-center px-4 py-2 text-break bg-white  mt-3 textContainer"
+      >
+        {{ post.content }}
+      </div>
+      <div class="d-flex justify-content-end mt-2">
+        <div
+          class="btn"
+          v-if="post.Comments.length > 1"
+          @click="showComment = !showComment"
+        >
+          Afficher les {{ post.Comments.length }} commentaires
+        </div>
+        <div
+          class="btn"
+          v-if="post.Comments.length < 2 && post.Comments.length > 0"
+          @click="showComment = !showComment"
+        >
+          Afficher le commentaire
+        </div>
       </div>
       <hr />
-      <div v-for="comment of post.Comments" :key="comment.id">
-        <div class="d-flex mb-2">
-          <b-avatar size="2rem" variant="info"></b-avatar>
-          <div class="d-flex align-items-center font-weight-bold ml-2">
-            {{
-              comment.User.lastname.charAt(0).toUpperCase() +
-                comment.User.lastname.slice(1) +
-                " " +
-                comment.User.firstname.charAt(0).toUpperCase() +
-                comment.User.firstname.slice(1)
-            }}
+      <div v-if="showComment">
+        <div v-for="comment of post.Comments" :key="comment.id">
+          <div class="d-flex mb-2 justify-content-between">
+            <div class="d-flex align-items-center">
+              <b-avatar size="2rem" variant="info"></b-avatar>
+              <div class="d-flex align-items-center font-weight-bold ml-2">
+                {{
+                  comment.User.lastname.charAt(0).toUpperCase() +
+                    comment.User.lastname.slice(1) +
+                    " " +
+                    comment.User.firstname.charAt(0).toUpperCase() +
+                    comment.User.firstname.slice(1)
+                }}
+              </div>
+            </div>
+            <div
+              v-if="comment.UserId === user.id || isAdmin == true"
+              class="d-flex align-items-center justify-content-end"
+            >
+              <b-avatar
+                v-b-tooltip.hover
+                title="Supprimer"
+                variant="danger"
+                button
+                icon="x"
+                class="shadow"
+                @click="deleteComment(comment.id, comment.PublicationId)"
+                size="1.5rem"
+              ></b-avatar>
+              <b-avatar
+                v-b-tooltip.hover
+                title="Modifier"
+                button
+                v-b-modal.modifyComment
+                icon="pen"
+                variant="info"
+                @click="getCurrentComment(comment.id)"
+                class="shadow ml-2"
+                size="1.5rem"
+              ></b-avatar>
+            </div>
           </div>
+          <p
+            class="bg-light mb-2 ml-5 mr-3 text-break textContainer w-auto px-4 py-2 shadow"
+          >
+            {{ comment.comment }}
+          </p>
         </div>
-        <p
-          class="bg-light mb-2 ml-5 mr-3 text-break rounded-pill w-auto px-4 py-2 shadow"
-        >
-          {{ comment.comment }}
-        </p>
       </div>
-      <hr v-if="post.Comments.length > 0" />
-      <comment :postId="post.id"></comment>
+      <hr v-if="post.Comments.length > 0 && showComment" />
+      <Comment :postId="post.id"></Comment>
+      <ModifyComment :postId="post.id"></ModifyComment>
     </article>
   </section>
 </template>
@@ -94,19 +143,13 @@
 <script>
 import { mapGetters } from "vuex";
 import { mapState } from "vuex";
-import Comment from "../components/comment.vue";
-import modifyPost from "../components/modifyPost.vue";
 
 export default {
-  components: {
-    modifyPost,
-    Comment
-  },
   data() {
     return {
       comment: "",
-      isAdmin: false,
-      index: -1
+      index: -1,
+      showComment: false
     };
   },
   beforeMount() {
@@ -117,6 +160,7 @@ export default {
     ...mapGetters({
       errors: "user/errors",
       isLoggedIn: "user/isLoggedIn",
+      isAdmin: "user/isAdmin",
       user: "user/currentUser"
     }),
     ...mapState("publication", {
@@ -130,6 +174,15 @@ export default {
     },
     deletePost(id) {
       this.$store.dispatch("publication/deletePost", id);
+    },
+    deleteComment(id, postId) {
+      this.$store.dispatch("comment/tryDeleteComment", {
+        id: id,
+        postId: postId
+      });
+    },
+    getCurrentComment(id) {
+      this.$store.dispatch("comment/getOneComment", id);
     }
   },
 
@@ -139,10 +192,36 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 #imgContent {
+  max-height: 200px;
   max-width: 100%;
-  max-height: 250px;
-  object-fit: cover;
+}
+#imgContainer {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 30px;
+  width: fit-content;
+  margin: 0 auto;
+}
+.textContainer {
+  border-radius: 20px;
+}
+
+@keyframes slide-left {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-500px);
+    opacity: 1;
+  }
+}
+.slide-left-enter-active {
+  animation: slide-left 0.3s;
+}
+.slide-left-leave-active {
+  animation: slide-left 0.3s reverse;
 }
 </style>
