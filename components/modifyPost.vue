@@ -33,7 +33,11 @@
           <div class="mb-2" v-if="imagePreview">
             <b-img thumbnail center fluid :src="imagePreview" alt=""> </b-img>
           </div>
-          <div v-if="currentPost.imageUrl">
+          <div
+            v-if="
+              currentPost.imageUrl != null && !imagePreview && isImageDeleted
+            "
+          >
             <div class="mb-2 position-relative">
               <b-avatar
                 v-b-tooltip.hover

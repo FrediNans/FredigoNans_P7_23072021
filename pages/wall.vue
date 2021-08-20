@@ -10,7 +10,7 @@
     <article
       v-for="post of posts"
       :key="post.id"
-      class="col-11 bg-secondary mx-auto rounded py-2 mt-3 col-sm-8 col-lg-6 text-primary"
+      class="col-11 bg-light mx-auto rounded py-2 mt-3 col-sm-8 col-lg-6 text-primary"
     >
       <div class="d-flex justify-content-between">
         <div class="d-flex">
@@ -54,37 +54,43 @@
         </div>
       </div>
       <hr />
-      <div
-        class="mt-2 font-weight-bold text-center bg-white mb-3 shadow py-2 px-4 text-break textContainer"
-      >
-        {{ post.title }}
-      </div>
+
       <div v-if="post.imageUrl !== null" id="imgContainer">
         <img id="imgContent" :src="post.imageUrl" />
       </div>
       <div
-        class="d-flex justify-content-start align-items-center px-4 py-2 text-break bg-white  mt-3 textContainer"
+        class="mt-3 font-weight-bold text-center text-primary py-2 px-4 text-break"
+      >
+        {{ post.title }}
+      </div>
+      <div
+        class="d-flex justify-content-start align-items-center px-4 py-2 text-break text-primary mt-1"
       >
         {{ post.content }}
       </div>
-      <div class="d-flex justify-content-end mt-2">
-        <div
-          class="btn"
-          v-if="post.Comments.length > 1"
+      <div
+        class="d-flex justify-content-end mt-2"
+        v-if="post.Comments.length > 0"
+      >
+        <b-button
+          variant="light"
+          v-b-toggle.collapse
+          v-if="!showComment"
           @click="showComment = !showComment"
-        >
-          Afficher les {{ post.Comments.length }} commentaires
-        </div>
-        <div
-          class="btn"
-          v-if="post.Comments.length < 2 && post.Comments.length > 0"
+          ><b-icon-caret-down></b-icon-caret-down> Afficher
+          {{ post.Comments.length }} commentaire(s)
+        </b-button>
+        <b-button
+          variant="light"
+          v-b-toggle.collapse
+          v-if="showComment"
           @click="showComment = !showComment"
-        >
-          Afficher le commentaire
-        </div>
+          ><b-icon-caret-up></b-icon-caret-up> Masquer
+          {{ post.Comments.length }} commentaire(s)
+        </b-button>
       </div>
       <hr />
-      <div v-if="showComment">
+      <b-collapse id="collapse">
         <div v-for="comment of post.Comments" :key="comment.id">
           <div class="d-flex mb-2 justify-content-between">
             <div class="d-flex align-items-center">
@@ -127,12 +133,12 @@
             </div>
           </div>
           <p
-            class="bg-light mb-2 ml-5 mr-3 text-break textContainer w-auto px-4 py-2 shadow"
+            class="bg-light mb-2 ml-5 mr-3 text-break textContainer w-auto px-4 py-2 shadow rounded-pill"
           >
             {{ comment.comment }}
           </p>
         </div>
-      </div>
+      </b-collapse>
       <hr v-if="post.Comments.length > 0 && showComment" />
       <Comment :postId="post.id"></Comment>
       <ModifyComment :postId="post.id"></ModifyComment>
@@ -194,7 +200,7 @@ export default {
 
 <style lang="scss">
 #imgContent {
-  max-height: 200px;
+  max-height: 150px;
   max-width: 100%;
 }
 #imgContainer {
@@ -204,9 +210,7 @@ export default {
   border-radius: 30px;
   width: fit-content;
   margin: 0 auto;
-}
-.textContainer {
-  border-radius: 20px;
+  box-shadow: 5px 5px 11px 0px #000000;
 }
 
 @keyframes slide-left {
