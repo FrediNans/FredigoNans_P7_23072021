@@ -17,7 +17,13 @@
       ></b-img>
       <div v-if="isLoggedIn" class="d-flex flex-column">
         <div class="d-flex justify-content-center pt-2">
-          <b-avatar button @click="goTo" variant="info"></b-avatar>
+          <b-avatar
+            button
+            @click="goTo"
+            variant="info"
+            v-b-tooltip.hover
+            title="Mon compte"
+          ></b-avatar>
         </div>
         <div @click="trySubmit" class="text-white text-center btn">
           Déconnexion

@@ -33,8 +33,8 @@
           <div class="mb-2" v-if="imagePreview">
             <b-img thumbnail center fluid :src="imagePreview" alt=""> </b-img>
           </div>
-          <div v-if="isImageDeleted">
-            <div class="mb-2 position-relative" v-if="!imagePreview">
+          <div v-if="currentPost.imageUrl">
+            <div class="mb-2 position-relative">
               <b-avatar
                 v-b-tooltip.hover
                 title="Supprimer"
@@ -129,11 +129,17 @@ export default {
     async trySubmit() {
       const formData = new FormData();
       formData.append("image", this.image);
+      formData.append("imageToDelete", this.imageToDelete);
+      formData.append("postId", this.currentPost.id);
       formData.append("post", JSON.stringify(this.currentPost));
       this.$store.dispatch("publication/tryModifyPost", formData);
+      this.imageToDelete = null;
+      this.isImageDeleted = true;
+      this.imagePreview = null;
+      this.image = null;
     },
     deleteImage() {
-      this.imageToDelete = this.imageUrl;
+      this.imageToDelete = this.currentPost.imageUrl;
       this.isImageDeleted = false;
     }
   }

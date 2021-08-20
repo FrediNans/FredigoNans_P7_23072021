@@ -73,6 +73,20 @@ export const actions = {
   async tryUpdateToken(context) {
     const token = localStorage.getItem("token");
     context.commit("updateToken", token);
+  },
+
+  async tryDeleteAccount(context, credentials) {
+    try {
+      context.commit("updateIsLoading", true);
+      const response = await this.$axios.delete(
+        `/user/deleteUser/${credentials}`
+      );
+      localStorage.removeItem("token");
+      context.commit("deleteAccountSuccess", response);
+      this.$router.push("/");
+    } catch (error) {
+      console.log(error);
+    }
   }
 };
 
@@ -120,5 +134,14 @@ export const mutations = {
     state.isLoading = false;
     state.isLoggedIn = true;
     state.errors = [];
+  },
+  deleteAccountSuccess(state, response) {
+    if ((response.status = 201)) {
+      state.data = {};
+      state.isLoading = false;
+      state.isLoggedIn = false;
+      state.errors = [];
+      state.token = null;
+    }
   }
 };

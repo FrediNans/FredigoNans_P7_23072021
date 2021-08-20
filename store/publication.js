@@ -32,9 +32,9 @@ export const actions = {
 
   async tryModifyPost(context, credentials) {
     try {
-      console.log(credentials);
+      const postId = credentials.get("postId");
       const response = await this.$axios.put(
-        `http://localhost:8080/publication/modifyPost`,
+        `/publication/modifyPost/${postId}`,
         credentials
       );
       context.commit("modifyPostSuccess", response.data);

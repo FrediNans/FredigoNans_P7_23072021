@@ -4,11 +4,24 @@
     <div
       class="d-flex flex-column bg-secondary rounded col-11 col-md-6 col-lg-4 mx-auto mt-4"
     >
-      <div class="font-weight-bold mt-3 text-primary text-capitalize">
-        Nom : {{ user.lastname }}
+      <div class="d-flex justify-content-between">
+        <div class="font-weight-bold mt-3 text-primary text-capitalize">
+          Nom : {{ user.firstname }}
+        </div>
+        <b-avatar
+          v-b-tooltip.hover
+          title="Supprimer mon compte"
+          variant="danger"
+          button
+          icon="x"
+          class="shadow ml-2 mt-2"
+          size="2rem"
+          v-b-modal.deleteAccount
+        >
+        </b-avatar>
       </div>
       <div class="font-weight-bold mt-3 text-primary text-capitalize">
-        Prénom : {{ user.firstname }}
+        Prénom : {{ user.lastname }}
       </div>
       <div class="font-weight-bold mt-3 text-primary text-capitalize">
         Région : {{ user.region }}
@@ -17,9 +30,66 @@
         Email : {{ user.email }}
       </div>
     </div>
-    <div class="w-100 d-flex justify-content-center mt-4">
-      <nuxt-link class="btn btn-danger" to="/modifyAccount">Modifier</nuxt-link>
+    <div
+      class="d-flex justify-content-end mt-4 col-11 col-md-6 col-lg-4 mx-auto mt-4"
+    >
+      <b-avatar
+        v-b-tooltip.hover
+        title="Retour"
+        variant="danger"
+        button
+        @click="goBack()"
+        icon="arrow-left"
+        class="shadow"
+        size="2.5rem"
+      ></b-avatar>
+      <b-avatar
+        v-b-tooltip.hover
+        title="Modifier votre compte"
+        variant="info"
+        button
+        icon="pen"
+        class="shadow  ml-3"
+        size="2.5rem"
+      ></b-avatar>
     </div>
+    <b-modal
+      size="lg"
+      id="deleteAccount"
+      header-bg-variant="secondary"
+      body-bg-variant="primary"
+      footer-bg-variant="secondary"
+      centered
+      ref="modal"
+      title="Supprimer mon compte"
+    >
+      <p class="font-weight-bold text-danger text-center">
+        Cette action est irréversible ! <br />
+        Voulez-vous continuer ?
+      </p>
+      <template #modal-footer="{ ok, cancel }">
+        <b-avatar
+          v-b-tooltip.hover
+          title="Annuler"
+          variant="danger"
+          button
+          icon="arrow-left"
+          @click="cancel()"
+          class="shadow"
+          size="2rem"
+        ></b-avatar>
+        <b-avatar
+          v-b-tooltip.hover
+          title="Valider"
+          variant="info"
+          button
+          icon="check2-circle"
+          @click="trySubmit(), ok()"
+          class="shadow"
+          size="2rem"
+        ></b-avatar>
+      </template>
+    </b-modal>
   </section>
 </template>
 
@@ -32,6 +102,15 @@ export default {
       user: "user/currentUser",
       isLoggedIn: "user/isLoggedIn"
     })
+  },
+
+  methods: {
+    trySubmit() {
+      this.$store.dispatch("user/tryDeleteAccount", this.user.id);
+    },
+    goBack() {
+      this.$router.push("/wall");
+    }
   }
 };
 </script>
