@@ -1,12 +1,12 @@
 <template>
   <section>
     <h1 class="text-center text-danger mt-4 h3">Mon compte</h1>
-    <div
-      class="d-flex flex-column bg-secondary rounded col-11 col-md-6 col-lg-4 mx-auto mt-4"
+    <article
+      class="d-flex flex-column bg-secondary col-11 col-md-6 col-lg-4 mx-auto mt-4"
     >
       <div class="d-flex justify-content-between">
         <div class="font-weight-bold mt-3 text-primary text-capitalize">
-          Nom : {{ user.firstname }}
+          Nom : {{ user.lastname }}
         </div>
         <b-avatar
           v-b-tooltip.hover
@@ -21,7 +21,7 @@
         </b-avatar>
       </div>
       <div class="font-weight-bold mt-3 text-primary text-capitalize">
-        Prénom : {{ user.lastname }}
+        Prénom : {{ user.firstname }}
       </div>
       <div class="font-weight-bold mt-3 text-primary text-capitalize">
         Région : {{ user.region }}
@@ -29,30 +29,31 @@
       <div class="font-weight-bold mt-3 mb-3 text-primary">
         Email : {{ user.email }}
       </div>
-    </div>
-    <div
-      class="d-flex justify-content-end mt-4 col-11 col-md-6 col-lg-4 mx-auto mt-4"
-    >
-      <b-avatar
-        v-b-tooltip.hover
-        title="Retour"
-        variant="danger"
-        button
-        @click="goBack()"
-        icon="arrow-left"
-        class="shadow"
-        size="2.5rem"
-      ></b-avatar>
-      <b-avatar
-        v-b-tooltip.hover
-        title="Modifier votre compte"
-        variant="info"
-        button
-        icon="pen"
-        class="shadow  ml-3"
-        size="2.5rem"
-      ></b-avatar>
-    </div>
+      <div class="d-flex justify-content-end mb-4 p-0 col-12">
+        <b-avatar
+          v-b-tooltip.hover
+          title="Retour"
+          variant="danger"
+          button
+          @click="goBack()"
+          icon="arrow-left"
+          class="shadow"
+          size="2rem"
+        ></b-avatar>
+        <b-avatar
+          v-b-tooltip.hover
+          title="Modifier votre compte"
+          v-b-modal.modifyAccount
+          variant="info"
+          button
+          icon="pen"
+          class="shadow  ml-3"
+          size="2rem"
+        ></b-avatar>
+      </div>
+    </article>
+
+    <ModifyAccount />
     <b-modal
       size="lg"
       id="deleteAccount"

@@ -4,9 +4,9 @@
       Création de compte
     </h1>
     <b-form
-      @submit="trySubmit"
-      @reset="onReset"
       v-if="show"
+      @reset="onReset"
+      @submit="trySubmit"
       class="col-11 col-md-6 col-lg-4 mx-auto d-flex flex-column"
     >
       <b-input-group class="mt-4">
@@ -92,14 +92,54 @@
           {{ error }}
         </li>
       </ul>
-      <div class="d-flex justify-content-between mt-4">
-        <b-button type="submit" variant="info" :class="{ disabled: isLoading }">
-          Valider
-        </b-button>
-
-        <b-button type="reset" variant="danger">Effacer</b-button>
+      <div class="d-flex justify-content-end mt-4">
+        <b-button
+          v-b-tooltip.hover
+          title="Annuler"
+          variant="danger"
+          type="reset"
+          class="shadow "
+          size="2.5rem"
+          ><b-icon-x></b-icon-x
+        ></b-button>
+        <b-button
+          v-b-tooltip.hover
+          title="Valider"
+          variant="info"
+          icon="check2-circle"
+          type="submit"
+          class="shadow ml-3"
+          size="2.5rem"
+          ><b-icon-check2-circle></b-icon-check2-circle
+        ></b-button>
       </div>
     </b-form>
+    <b-modal
+      size="lg"
+      id="createAccountSuccess"
+      header-bg-variant="secondary"
+      body-bg-variant="primary"
+      footer-bg-variant="secondary"
+      centered
+      ref="modal"
+    >
+      <p class="font-weight-bold text-danger text-center">
+        Compte créer avec succès ! <br />
+        Vous pouvez désormais vous connecter !
+      </p>
+      <template #modal-footer="{ ok }">
+        <b-avatar
+          v-b-tooltip.hover
+          title="Valider"
+          variant="info"
+          button
+          icon="check2-circle"
+          @click="ok(), goLogin()"
+          class="shadow"
+          size="2rem"
+        ></b-avatar>
+      </template>
+    </b-modal>
   </section>
 </template>
 
@@ -133,10 +173,11 @@ export default {
     }
   },
   methods: {
-    trySubmit(event) {
+    async trySubmit(event) {
       event.preventDefault();
       if (!this.isLoading) {
         this.$store.dispatch("user/trySignup", this.form);
+        this.$bvModal.show("createAccountSuccess");
       }
     },
     onReset(event) {
@@ -151,6 +192,9 @@ export default {
       this.$nextTick(() => {
         this.show = true;
       });
+    },
+    goLogin() {
+      this.$router.push("/");
     },
     isEmailValid() {
       if (this.form.email.length > 5) {

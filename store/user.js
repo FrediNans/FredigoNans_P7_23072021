@@ -1,6 +1,5 @@
 export const state = () => ({
   data: {},
-  isAdmin: false,
   isLoading: false,
   isLoggedIn: false,
   token: localStorage.getItem("token"),
@@ -8,7 +7,6 @@ export const state = () => ({
 });
 
 export const getters = {
-  isAdmin: state => state.isAdmin,
   isLoading: state => state.isLoading,
   isLoggedIn: state => state.isLoggedIn,
   errors: state => state.errors,
@@ -33,7 +31,6 @@ export const actions = {
       context.commit("updateIsLoading", true);
       await this.$axios.post("http://localhost:8080/user/signup", user);
       context.commit("signupSuccess");
-      this.$router.push("/");
     } catch (err) {
       context.commit("signError", err);
     }

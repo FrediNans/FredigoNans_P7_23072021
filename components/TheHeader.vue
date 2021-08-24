@@ -7,27 +7,30 @@
       toggleable="lg"
       type="dark"
       variant="primary"
-      class="d-flex justify-content-between"
+      class="d-flex justify-content-between flex-wrap p-0"
     >
       <b-img
         src="../static/icon-left-white.png"
         fluid
         alt="logo"
-        class="col-7 col-sm-4"
+        class="col-6 col-sm-4 col-lg-3"
       ></b-img>
-      <div v-if="isLoggedIn" class="d-flex flex-column">
-        <div class="d-flex justify-content-center pt-2">
-          <b-avatar
-            button
-            @click="goTo"
-            variant="info"
-            v-b-tooltip.hover
-            title="Mon compte"
-          ></b-avatar>
-        </div>
-        <div @click="trySubmit" class="text-white text-center btn">
+      <div v-if="isLoggedIn" class="d-flex col-12 justify-content-end">
+        <b-button
+          @click="goTo"
+          size="sm"
+          variant="primary"
+          class="text-white mr-2"
+          >Mon compte</b-button
+        >
+        <b-button
+          @click="trySubmit"
+          size="sm"
+          variant="primary"
+          class="text-white"
+        >
           Déconnexion
-        </div>
+        </b-button>
       </div>
     </b-navbar>
   </header>
@@ -46,7 +49,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      isLoggedIn: "user/isLoggedIn"
+      isLoggedIn: "user/isLoggedIn",
+      user: "user/currentUser"
     })
   }
 };

@@ -1,8 +1,14 @@
 <template>
-  <section>
-    <h1 class="text-center text-danger mt-4 h3">
-      Modification de compte
-    </h1>
+  <b-modal
+    size="lg"
+    id="modifyAccount"
+    header-bg-variant="secondary"
+    body-bg-variant="light"
+    footer-bg-variant="secondary"
+    centered
+    ref="modal"
+    title="Modification de compte"
+  >
     <b-form
       @submit="trySubmit"
       class="col-11 col-md-6 col-lg-4 mx-auto d-flex flex-column"
@@ -57,14 +63,30 @@
           {{ errors }}
         </li>
       </ul>
-      <div class="d-flex justify-content-between mt-4">
-        <b-button type="submit" variant="info" :class="{ disabled: isLoading }">
-          Valider
-        </b-button>
-        <nuxt-link class="btn btn-danger" to="/account">Annuler</nuxt-link>
-      </div>
     </b-form>
-  </section>
+    <template #modal-footer="{ ok, cancel }">
+      <b-avatar
+        v-b-tooltip.hover
+        title="Annuler"
+        variant="danger"
+        button
+        icon="arrow-left"
+        @click="cancel()"
+        class="shadow"
+        size="2rem"
+      ></b-avatar>
+      <b-avatar
+        v-b-tooltip.hover
+        title="Valider"
+        variant="info"
+        button
+        icon="check2-circle"
+        @click="trySubmit(), ok()"
+        class="shadow"
+        size="2rem"
+      ></b-avatar>
+    </template>
+  </b-modal>
 </template>
 
 <script>
@@ -96,24 +118,18 @@ export default {
     }
   },
   methods: {
-    trySubmit(event) {
-      event.preventDefault();
-      if (!this.isLoading) {
-        if (this.form.firstname === "") {
-          this.form.firstname = this.user.firstname;
-        }
-        if (this.form.lastname === "") {
-          this.form.lastname = this.user.lastname;
-        }
-        if (this.form.region === "") {
-          this.form.region = this.user.region;
-        }
-        this.$store.dispatch("user/modifyAccount", this.form);
+    trySubmit() {
+      if (this.form.firstname === "") {
+        this.form.firstname = this.user.firstname;
       }
+      if (this.form.lastname === "") {
+        this.form.lastname = this.user.lastname;
+      }
+      if (this.form.region === "") {
+        this.form.region = this.user.region;
+      }
+      this.$store.dispatch("user/modifyAccount", this.form);
     }
-  },
-  head: {
-    title: "Mon compte"
   }
 };
 </script>

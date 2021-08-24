@@ -1,5 +1,5 @@
 <template>
-  <section id="container" class=" d-flex flex-column">
+  <section id="container" class="site-content">
     <h1 class="h3 text-danger text-center mt-4">
       Bienvenu sur votre réseau social d'entreprise !
     </h1>
@@ -104,3 +104,5 @@ export default {
   }
 };
 </script>
+
+<style lang="scss"></style>

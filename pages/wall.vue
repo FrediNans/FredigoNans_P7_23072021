@@ -1,20 +1,37 @@
 <template>
   <section class="mt-4 ">
     <div class="d-flex justify-content-center mb-4">
-      <b-button v-b-modal.createPost variant="info">
-        <b-icon-journal-plus></b-icon-journal-plus> Nouveau post</b-button
+      <b-button v-b-modal.createPost variant="info" class="shadow" size="sm">
+        <b-icon-journal-plus></b-icon-journal-plus> Créer post</b-button
       >
+      <b-avatar
+        v-b-tooltip.hover
+        title="Rafraichir les posts"
+        button
+        icon="arrow-repeat"
+        variant="info"
+        @click="refreshPost()"
+        class="shadow ml-4"
+        size="2rem"
+      ></b-avatar>
     </div>
     <CreatePost />
     <ModifyPost />
     <article
       v-for="post of posts"
       :key="post.id"
-      class="col-11 bg-light mx-auto rounded py-2 mt-3 col-sm-8 col-lg-6 text-primary"
+      class="col-11 bg-light mx-auto py-2 mt-3 col-sm-8 col-lg-6 text-primary slide-left-enter-active slide-left-leave-active"
     >
       <div class="d-flex justify-content-between">
         <div class="d-flex">
-          <b-avatar variant="info"></b-avatar>
+          <b-avatar
+            variant="info"
+            src=""
+            :text="
+              post.User.lastname.charAt(0).toUpperCase() +
+                post.User.firstname.charAt(0).toUpperCase()
+            "
+          ></b-avatar>
           <div class="d-flex align-items-center ml-2 font-weight-bold">
             {{
               post.User.lastname.charAt(0).toUpperCase() +
@@ -27,7 +44,7 @@
         </div>
 
         <div
-          v-if="post.UserId === user.id || isAdmin"
+          v-if="user.isAdmin || post.UserId === user.id"
           class="d-flex align-items-center justify-content-end"
         >
           <b-avatar
@@ -36,7 +53,7 @@
             variant="danger"
             button
             icon="x"
-            class="shadow ml-2"
+            class="ml-2"
             @click="deletePost(post.id)"
             size="2rem"
           ></b-avatar>
@@ -48,7 +65,7 @@
             icon="pen"
             variant="info"
             @click="getCurrentPost(post.id)"
-            class="shadow ml-2"
+            class="ml-2"
             size="2rem"
           ></b-avatar>
         </div>
@@ -77,24 +94,33 @@
           v-b-toggle.collapse
           v-if="!showComment"
           @click="showComment = !showComment"
-          ><b-icon-caret-down></b-icon-caret-down> Afficher
-          {{ post.Comments.length }} commentaire(s)
+          ><b-icon-caret-down></b-icon-caret-down> Afficher les commentaires
         </b-button>
         <b-button
           variant="light"
           v-b-toggle.collapse
           v-if="showComment"
           @click="showComment = !showComment"
-          ><b-icon-caret-up></b-icon-caret-up> Masquer
-          {{ post.Comments.length }} commentaire(s)
+          ><b-icon-caret-up></b-icon-caret-up> Masquer les commentaires
         </b-button>
       </div>
       <hr />
       <b-collapse id="collapse">
-        <div v-for="comment of post.Comments" :key="comment.id">
+        <div
+          v-for="comment of post.Comments"
+          :key="comment.id"
+          class="slide-left-enter-active slide-left-leave-active"
+        >
           <div class="d-flex mb-2 justify-content-between">
             <div class="d-flex align-items-center">
-              <b-avatar size="2rem" variant="info"></b-avatar>
+              <b-avatar
+                size="2rem"
+                :text="
+                  comment.User.lastname.charAt(0).toUpperCase() +
+                    comment.User.firstname.charAt(0).toUpperCase()
+                "
+                variant="info"
+              ></b-avatar>
               <div class="d-flex align-items-center font-weight-bold ml-2">
                 {{
                   comment.User.lastname.charAt(0).toUpperCase() +
@@ -106,7 +132,7 @@
               </div>
             </div>
             <div
-              v-if="comment.UserId === user.id || isAdmin == true"
+              v-if="comment.UserId === user.id || user.isAdmin == true"
               class="d-flex align-items-center justify-content-end"
             >
               <b-avatar
@@ -115,7 +141,6 @@
                 variant="danger"
                 button
                 icon="x"
-                class="shadow"
                 @click="deleteComment(comment.id, comment.PublicationId)"
                 size="1.5rem"
               ></b-avatar>
@@ -127,7 +152,7 @@
                 icon="pen"
                 variant="info"
                 @click="getCurrentComment(comment.id)"
-                class="shadow ml-2"
+                class=" ml-2"
                 size="1.5rem"
               ></b-avatar>
             </div>
@@ -140,7 +165,7 @@
         </div>
       </b-collapse>
       <hr v-if="post.Comments.length > 0 && showComment" />
-      <Comment :postId="post.id"></Comment>
+      <CommentForm :postId="post.id"></CommentForm>
       <ModifyComment :postId="post.id"></ModifyComment>
     </article>
   </section>
@@ -166,7 +191,6 @@ export default {
     ...mapGetters({
       errors: "user/errors",
       isLoggedIn: "user/isLoggedIn",
-      isAdmin: "user/isAdmin",
       user: "user/currentUser"
     }),
     ...mapState("publication", {
@@ -189,6 +213,9 @@ export default {
     },
     getCurrentComment(id) {
       this.$store.dispatch("comment/getOneComment", id);
+    },
+    refreshPost() {
+      this.$store.dispatch("publication/getAllPost");
     }
   },
 
@@ -207,25 +234,10 @@ export default {
   display: flex;
   justify-content: center;
   overflow: hidden;
-  border-radius: 30px;
+  border-radius: 10px;
+  border: 1px solid white;
   width: fit-content;
   margin: 0 auto;
   box-shadow: 5px 5px 11px 0px #000000;
-}
-
-@keyframes slide-left {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(-500px);
-    opacity: 1;
-  }
-}
-.slide-left-enter-active {
-  animation: slide-left 0.3s;
-}
-.slide-left-leave-active {
-  animation: slide-left 0.3s reverse;
 }
 </style>
