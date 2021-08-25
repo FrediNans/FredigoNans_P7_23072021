@@ -1,12 +1,12 @@
 <template>
   <section id="container" class="site-content">
-    <h1 class="h3 text-danger text-center mt-4">
+    <h1 class="h3 text-danger text-center mt-4 mx-3">
       Bienvenu sur votre réseau social d'entreprise !
     </h1>
     <b-form
       @submit="tryLogin"
       v-if="show"
-      class="col-11 col-md-6 col-lg-4 mx-auto d-flex flex-column"
+      class="col-11 col-sm-8 col-md-6 col-lg-4 mx-auto d-flex flex-column"
     >
       <b-input-group class="mt-4">
         <b-input-group-prepend>

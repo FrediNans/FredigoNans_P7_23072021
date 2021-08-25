@@ -87,11 +87,13 @@
         >
         </b-form-input>
       </b-input-group>
+
       <ul v-if="formErrors.length < 0">
         <li class="text-danger" v-for="error in formErrors" :key="error">
           {{ error }}
         </li>
       </ul>
+
       <div class="d-flex justify-content-end mt-4">
         <b-button
           v-b-tooltip.hover
@@ -160,17 +162,17 @@ export default {
       message: "je suis une variable de l'enfant"
     };
   },
+  watch: {
+    errors(newValue) {
+      this.formErrors = newValue;
+    }
+  },
   computed: {
     ...mapGetters({
       isLoading: "user/isLoading",
       errors: "user/errors",
       isLoggedIn: "user/isLoggedIn"
     })
-  },
-  watch: {
-    errors(newValue) {
-      this.formErrors = newValue;
-    }
   },
   methods: {
     async trySubmit(event) {

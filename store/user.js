@@ -22,10 +22,11 @@ export const actions = {
       localStorage.setItem("token", response.data.token);
       context.commit("loginSuccess", response.data);
       this.$router.push("/wall");
-    } catch (err) {
-      context.commit("signError", err);
+    } catch (error) {
+      context.commit("signError", error);
     }
   },
+
   async trySignup(context, user) {
     try {
       context.commit("updateIsLoading", true);
@@ -41,8 +42,8 @@ export const actions = {
       context.commit("updateIsLoading", true);
       const response = await this.$axios.get("/user/account", credentials);
       context.commit("fetchCurrentUserSuccess", response.data);
-    } catch (err) {
-      context.commit("signError", err);
+    } catch (error) {
+      context.commit("signError", error);
       this.$router.push("/");
     }
   },
@@ -104,10 +105,10 @@ export const mutations = {
     state.errors = [];
   },
 
-  signError(state, errors) {
+  signError(state, err) {
     state.isLoading = false;
-    console.log(errors.response.data);
-    state.errors = errors.response.data;
+    console.log(err);
+    state.errors.push(err);
   },
   modifyAccountSuccess(state, user) {
     state.data = user;

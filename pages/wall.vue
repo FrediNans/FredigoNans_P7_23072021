@@ -1,26 +1,63 @@
 <template>
-  <section class="mt-4 ">
-    <div class="d-flex justify-content-center mb-4">
-      <b-button v-b-modal.createPost variant="info" class="shadow" size="sm">
-        <b-icon-journal-plus></b-icon-journal-plus> Créer post</b-button
+  <section class="mt-4">
+    <nav id="nav" class="mb-4 py-2">
+      <div
+        class="d-flex flex-sm-column col-sm-2 justify-content-center align-items-sm-center"
       >
-      <b-avatar
-        v-b-tooltip.hover
-        title="Rafraichir les posts"
-        button
-        icon="arrow-repeat"
-        variant="info"
-        @click="refreshPost()"
-        class="shadow ml-4"
-        size="2rem"
-      ></b-avatar>
-    </div>
+        <b-avatar
+          v-b-tooltip.hover
+          title="Rafraichir les posts"
+          button
+          icon="arrow-repeat"
+          variant="info"
+          @click="refreshPost()"
+          class="shadow mr-5 mr-sm-0"
+          size="2rem"
+        ></b-avatar>
+        <b-avatar
+          v-b-tooltip.hover
+          title="Créer un post"
+          v-b-modal.createPost
+          variant="info"
+          class="shadow my-sm-3"
+          size="2rem"
+          icon="journal-plus"
+        >
+        </b-avatar>
+        <b-avatar
+          v-b-tooltip.hover
+          title="Afficher les commentaires"
+          class="ml-5 ml-sm-0 shadow"
+          variant="info"
+          button
+          icon="chat"
+          v-b-toggle.collapse
+          v-if="!showComment"
+          @click="showComment = !showComment"
+          size="2rem"
+        >
+        </b-avatar>
+        <b-avatar
+          v-b-tooltip.hover
+          title="Masquer les commentaires"
+          class="ml-5 ml-sm-0 shadow"
+          variant="info"
+          button
+          icon="chat-dots"
+          v-b-toggle.collapse
+          v-if="showComment"
+          @click="showComment = !showComment"
+          size="2rem"
+        >
+        </b-avatar>
+      </div>
+    </nav>
     <CreatePost />
     <ModifyPost />
     <article
       v-for="post of posts"
       :key="post.id"
-      class="col-11 bg-light mx-auto py-2 mt-3 col-sm-8 col-lg-6 text-primary slide-left-enter-active slide-left-leave-active"
+      class="col-11 bg-light mx-auto py-2 mt-5 mt-sm-2 col-sm-8 col-lg-6 text-primary slide-left-enter-active slide-left-leave-active"
     >
       <div class="d-flex justify-content-between">
         <div class="d-flex">
@@ -86,23 +123,10 @@
         {{ post.content }}
       </div>
       <div
-        class="d-flex justify-content-end mt-2"
         v-if="post.Comments.length > 0"
+        class="d-flex justify-content-end text-muted"
       >
-        <b-button
-          variant="light"
-          v-b-toggle.collapse
-          v-if="!showComment"
-          @click="showComment = !showComment"
-          ><b-icon-caret-down></b-icon-caret-down> Afficher les commentaires
-        </b-button>
-        <b-button
-          variant="light"
-          v-b-toggle.collapse
-          v-if="showComment"
-          @click="showComment = !showComment"
-          ><b-icon-caret-up></b-icon-caret-up> Masquer les commentaires
-        </b-button>
+        <div>{{ post.Comments.length }} commentaires</div>
       </div>
       <hr />
       <b-collapse id="collapse">
@@ -239,5 +263,21 @@ export default {
   width: fit-content;
   margin: 0 auto;
   box-shadow: 5px 5px 11px 0px #000000;
+}
+#nav {
+  position: fixed;
+  top: 99px;
+  width: 100%;
+  z-index: 2;
+  background: $primary;
+}
+@media screen and(min-width: 750px) {
+  #nav {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    top: 125px;
+    background: transparent;
+  }
 }
 </style>
